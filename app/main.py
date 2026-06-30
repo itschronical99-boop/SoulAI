@@ -1,19 +1,21 @@
 from fastapi import FastAPI
-from pydantic import BaseModel
+from app.routes.chat import router
+from app.config.settings import settings
 
-app = FastAPI()
+app = FastAPI(
+    title=settings.APP_NAME,
+    version=settings.APP_VERSION
+)
 
-class ChatRequest(BaseModel):
-    message:str
+app.include_router(router)
 
 @app.get("/")
 def home():
+    return {"message": "SoulAI Backend Running"}
+
+@app.get("/config")
+def config():
     return {
-        "message": "Welcome to SoulAI 🚀"
-    }
-@app.post("/chat")
-def chat(data:ChatRequest):
-    return{
-        "user_message":data.message,
-        "reply":f"You said:{data.message}"
+        "app": settings.APP_NAME,
+        "version": settings.APP_VERSION
     }
